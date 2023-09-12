@@ -68,6 +68,10 @@ module BushSlicer
           awscred["aws_secret_access_key"]
         )
       }) )
+      logger.info("Debug1--#{Aws::Credentials.new(
+          awscred["aws_access_key_id"],
+          awscred["aws_secret_access_key"]
+        ).secret_access_key}-")
       logger.info("Debug1-#{Aws.config}-")
       Aws.config.update( config[:config_opts].merge({region: region})) if region
       logger.info("Debug1-#{Aws.config}-")
