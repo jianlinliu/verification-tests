@@ -43,7 +43,7 @@ module BushSlicer
             cred_file = File.expand_path(cred_file)
             logger.info("Using #{cred_file} credentials file.")
             awscred = Hash[File.read(cred_file).scan(/(.+?)\s*=\s*(.+)/)]
-            logger.info("-#{awscred}-")
+            logger.info("Debug-#{awscred}-")
             break # break if no error was raised above
           rescue
             logger.warn("Problem reading credential file #{cred_file}")
@@ -53,12 +53,20 @@ module BushSlicer
       end
 
       raise "no readable credentials file or external credentials config found" unless awscred
+      logger.info("Debug-#{config[:config_opts]}-")
+      logger.info("Debug-#{Aws::Credentials.new(
+          awscred["aws_access_key_id"],
+          awscred["aws_secret_access_key"]
+        )}-")
+    
+      logger.info("Debug-#{Aws.config}-")
       Aws.config.update( config[:config_opts].merge({
         credentials: Aws::Credentials.new(
           awscred["aws_access_key_id"],
           awscred["aws_secret_access_key"]
         )
       }) )
+      logger.info("Debug-#{Aws.config}-")
       Aws.config.update( config[:config_opts].merge({region: region})) if region
       ## for internal data-hub, which is a s3 like service, we need to override the
       if service_name == 'DATA-HUB'
